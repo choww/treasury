@@ -3,6 +3,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import indexRouter from './routes/index';
 import usersRouter from './routes/users';
 
@@ -12,10 +13,11 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors());
 app.use(express.static(path.join(__dirname, '../public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api', indexRouter);
+app.use('/api/users', usersRouter);
 
 // MONGODB
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });

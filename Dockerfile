@@ -6,7 +6,7 @@ RUN npm install --production
 FROM node:12-alpine3.10 AS builder
 WORKDIR /app
 COPY . .
-RUN npm i && npm run build && rm -rf node_modules server 
+RUN npm i && npm run build && rm -rf node_modules src
 
 FROM node:12-alpine3.10 
 WORKDIR /app

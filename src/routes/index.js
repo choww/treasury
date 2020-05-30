@@ -3,7 +3,8 @@ import express from 'express';
 const router = express.Router();
 
 
-router.get('/', function(req, res, next) {
+router.get('/', (req, res) => {
+  res.json({ message: 'Welcome to the Treasury API!' });
 });
 
 
