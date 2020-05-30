@@ -1,0 +1,31 @@
+version: "3"
+
+networks:
+  treasury:
+
+services:
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run start
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - treasury
+  mongodb:
+    container_name: mongodb
+    image: mongo:4.2.7-bionic
+    ports:
+      - "27017:27017"
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - treasury
