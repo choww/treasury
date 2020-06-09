@@ -1,7 +1,9 @@
 <template>
   <div>
-    <button @click="login">Login</button>
-    <button @click="logout">Logout</button>
+    <button @click="login" v-if="!isAuthenticated">Login</button>
+    <button @click="logout" v-if="isAuthenticated">Logout</button>
+
+    <p>{{ info }}</p>
   </div>
 </template>
 
@@ -9,14 +11,25 @@
 import axiosModule from 'axios';
 
 export default {
-  data: {},
+  data() {
+    return {
+      api: 'http://localhost:3000',
+      isAuthenticated: false,
+    };
+  },
+  computed: {
+    info() {
+      return this.$route.params;
+    },
+    axios() {
+    },
+  },
   methods: {
-    login: async () {
-      const axios = axiosModule.create({
-        baseURL: 'http://localhost:3000',
-      });
-
-      return axios.get('/login');
+    login: function() {
+      window.location = `${this.api}/login`;
+    },
+    logout: function() {
+      window.location = `${this.api}/logout`;
     },
   },
 };

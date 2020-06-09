@@ -8,15 +8,17 @@ services:
     container_name: api
     build:
       context: ./api
-      dockerfile: Dockerfile
-    command: npm run start
+      dockerfile: Dockerfile.dev
     ports:
       - "3000:3000"
+    command: npm run dev
     depends_on:
       - mongodb
     env_file:
       - ./api/.env
     restart: always
+    volumes:
+      - ./api/src:/app/src
     networks:
       - treasury
   www:
@@ -24,13 +26,15 @@ services:
     build:
       context: ./www
       dockerfile: Dockerfile
-    command: npm run start
     ports:
       - "8080:8080"
+    command: npm start
     depends_on:
       - mongodb
       - api
     restart: always
+    volumes:
+      - ./www/src:/app/src
     networks:
       - treasury
   mongodb:

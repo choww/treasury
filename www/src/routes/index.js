@@ -5,12 +5,12 @@ import Landing from '@/components/Landing'
 
 Vue.use(Router);
 
-export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'Landing',
-      component: Landing,
-    },
-  ],
-});
+const routes = [
+  {
+    path: '/',
+    name: 'Landing',
+    component: Landing,
+  },
+]
+
+export default new Router({ routes });

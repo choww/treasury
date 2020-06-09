@@ -7,5 +7,10 @@
 <script>
 export default {
   name: 'App',
+  computed: {
+    name() {
+      return this.$route.name;
+    },
+  },
 };
 </script>

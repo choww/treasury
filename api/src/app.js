@@ -1,4 +1,5 @@
 import express from 'express';
+import http from 'http';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
@@ -14,7 +15,8 @@ import indexRouter from './routes/index';
 import usersRouter from './routes/users';
 import authRouter from './routes/authentication';
 
-var app = express();
+const app = express();
+const port = process.env.PORT || 3000;
 
 dotenv.config();
 
@@ -88,4 +90,13 @@ const db = mongoose.connection;
 db.on('error', error => console.error(error));
 db.once('open', () => console.log('Connected to MongoDB'));
 
-export default app;
+// HTTP SERVER
+app.set('port', port);
+const server = http.createServer(app);
+server.listen(port);
+server.on('listening', () => {
+  const addr = server.address();
+  console.log(`Listening on ${addr}:${port}`);
+});
+
+// export default app;

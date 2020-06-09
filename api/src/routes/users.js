@@ -5,6 +5,7 @@ var router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
+    console.log('REQ', req.session.passport.user);
     const users = await User.find();
     res.json({ users });
   } catch (error) {

@@ -43,8 +43,6 @@ module.exports = {
   },
   plugins: [
     new VueLoaderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NamedModulesPlugin(), // HMR shows correct file names in console on update.
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html',
@@ -55,5 +53,13 @@ module.exports = {
     host: '0.0.0.0',
     port: 8080,
     open: true,
+    proxy: {
+      api: 'http://localhost:3000',
+    }
+  },
+  // Necessary for file changes inside the bind mount to get picked up
+  watchOptions: {
+    aggregateTimeout: 300,
+    poll: 1000
   },
 };

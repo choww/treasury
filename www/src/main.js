@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import App from './App';
-import Router from './routes';
+import router from './routes';
 
 Vue.config.proudctionTip = false;
 
 new Vue({
   el: '#app',
-  Router, 
+  router, 
+  components: { App },
+  template: '<App/>',
 });
