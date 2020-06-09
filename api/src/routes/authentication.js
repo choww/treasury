@@ -23,6 +23,8 @@ router.get('/callback', (req, res, next) => {
     req.logIn(user, err => {
       if (err) return next(err);
 
+      console.log(user);
+
       // redirect to previously requested URL or to /
       const { returnTo } = req.session;
       delete req.session.returnTo;

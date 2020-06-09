@@ -1,5 +1,6 @@
 import express from 'express';
 import User from '../db/user.schema';
+
 var router = express.Router();
 
 router.get('/', async (req, res) => {

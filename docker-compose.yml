@@ -4,10 +4,10 @@ networks:
   treasury:
 
 services:
-  app:
-    container_name: app
+  api:
+    container_name: api
     build:
-      context: .
+      context: ./api
       dockerfile: Dockerfile
     command: npm run start
     ports:
@@ -15,7 +15,21 @@ services:
     depends_on:
       - mongodb
     env_file:
-      - .env
+      - ./api/.env
+    restart: always
+    networks:
+      - treasury
+  www:
+    container_name: www
+    build:
+      context: ./www
+      dockerfile: Dockerfile
+    command: npm run start
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+      - api
     restart: always
     networks:
       - treasury
@@ -25,7 +39,7 @@ services:
     ports:
       - "27017:27017"
     env_file:
-      - .env
+      - ./api/.env
     restart: always
     networks:
       - treasury

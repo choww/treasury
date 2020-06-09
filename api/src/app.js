@@ -9,6 +9,7 @@ import passport from 'passport';
 import Auth0Strategy from 'passport-auth0';
 import dotenv from 'dotenv';
 
+import secureRoute from './middleware/secure-route';
 import indexRouter from './routes/index';
 import usersRouter from './routes/users';
 import authRouter from './routes/authentication';
@@ -22,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
-app.use(express.static(path.join(__dirname, '../public')));
+// app.use(express.static(path.join(__dirname, '../../www')));
 
 // SESSION CONFIG
 const session = {
@@ -76,7 +77,7 @@ app.use((req, res, next) => {
 
 // API ROUTES
 app.use('/api', indexRouter);
-app.use('/api/users', usersRouter);
+app.use('/api/users', secureRoute, usersRouter);
 
 // APP ROUTES
 app.use('/', authRouter);
