@@ -18,6 +18,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  monthlyIncome: {
+    type: Number,
+    required: true,
+  },
+  savingsGoal: {
+    type: Number,
+    default: 0,
+  },
+  savings: {
+    type: Number,
+    default: 0,
+  },
 });
 
 module.exports = mongoose.model('User', userSchema);

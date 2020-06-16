@@ -1,0 +1,6 @@
+FROM node:12-alpine3.10 
+WORKDIR /app
+COPY . . 
+RUN npm i && npm run build 
+EXPOSE 3000
+CMD ["npm run dev"]
