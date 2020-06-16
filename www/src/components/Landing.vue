@@ -1,9 +1,9 @@
 <template>
   <div>
-    <button @click="login" v-if="!isAuthenticated">Login</button>
-    <button @click="logout" v-if="isAuthenticated">Logout</button>
+    <button @click="login" v-if="!$auth.isAuthenticated">Login</button>
+    <button @click="logout" v-if="$auth.isAuthenticated">Logout</button>
 
-    <p>{{ info }}</p>
+    <p>{{ $auth.user }}</p>
   </div>
 </template>
 
@@ -14,22 +14,24 @@ export default {
   data() {
     return {
       api: 'http://localhost:3000',
-      isAuthenticated: false,
+      // isAuthenticated: false,
     };
   },
   computed: {
     info() {
-      return this.$route.params;
-    },
-    axios() {
+      // return this.$auth;
     },
   },
   methods: {
-    login: function() {
-      window.location = `${this.api}/login`;
+    login() {
+      // window.location = `${this.api}/login`;
+      this.$auth.login();
     },
     logout: function() {
-      window.location = `${this.api}/logout`;
+      this.$auth.logout({
+        returnTo: window.location.origin,
+      });
+      // window.location = `${this.api}/logout`;
     },
   },
 };

@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -9,6 +10,8 @@ function getPath(dir) {
 module.exports = {
   mode: 'development',
   entry: ['./src/main.js'],
+  // allows use of dotenv
+  node: { fs: 'empty' },
   output: {
     path: getPath('dist'),
     filename: '[name].js',
@@ -29,7 +32,7 @@ module.exports = {
       {
         test: /\.js$/,
         use: 'babel-loader',
-        include: [getPath('www')],
+        include: [getPath('src')],
       },
       {
         test: /\.(png|jpe?g|gif)$/,
@@ -50,7 +53,10 @@ module.exports = {
     }),
   ],
   devServer: {
-    host: '0.0.0.0',
+    https: true,
+    key: fs.readFileSync('/app/localhost.key'),
+    cert: fs.readFileSync('/app/localhost.crt'),
+    host: 'https://localhost',
     port: 8080,
     open: true,
     proxy: {

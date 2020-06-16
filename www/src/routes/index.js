@@ -13,4 +13,7 @@ const routes = [
   },
 ]
 
-export default new Router({ routes });
+export default new Router({ 
+  base: process.env.BASE_URL,
+  routes 
+});
