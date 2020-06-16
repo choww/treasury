@@ -53,10 +53,7 @@ module.exports = {
     }),
   ],
   devServer: {
-    https: true,
-    key: fs.readFileSync('/app/localhost.key'),
-    cert: fs.readFileSync('/app/localhost.crt'),
-    host: 'https://localhost',
+    host: 'http://localhost',
     port: 8080,
     open: true,
     proxy: {
