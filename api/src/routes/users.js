@@ -1,11 +1,11 @@
 import express from 'express';
+import bcrypt from 'bcrypt';
 import User from '../db/user.schema';
 
-var router = express.Router();
+const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    console.log('REQ', req.session.passport.user);
     const users = await User.find();
     res.json({ users });
   } catch (error) {
@@ -15,9 +15,15 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const user = new User({ ...req.body });
+    const hash = await bcrypt.hash(req.body.password, 10);
+    const params = Object.assign(req.body, { password: hash });
+    const user = new User(params);
     const newUser = await user.save();
-    res.status(201).json({ user: newUser })
+
+    res.status(201).json({ 
+      message: `${newUser.firstName} ${newUser.lastName} created`, 
+      user: newUser,
+    })
   } catch (error) {
     res.status(400).json({ error })
   }
