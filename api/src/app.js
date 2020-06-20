@@ -8,6 +8,9 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import passport from 'passport';
+
+import authRouter from './routes/authentication';
+import signUpRouter from './routes/signup';
 import routes from './routes';
 
 const app = express();
@@ -46,7 +49,13 @@ passport.deserializeUser((id, done) => {
 });
 
 // ROUTES
+app.use('/api/signup', signUpRouter);
+app.use('/api/auth', authRouter);
 app.use(routes);
+
+app.use('/api', (req, res) => {
+  res.json({ message: 'Welcome to the Treasury API!' });
+});
 
 // MONGODB
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });

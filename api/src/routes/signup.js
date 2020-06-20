@@ -20,24 +20,4 @@ router.post('/', async (req, res) => {
   }
 });
 
-
-router.get('/', async (req, res) => {
-  try {
-    const users = await User.find();
-    res.json({ users });
-  } catch (error) {
-    res.status(400).json({ error })
-  }
-});
-
-router.delete('/', async (req, res) => {
-  try {
-    await User.findOneAndRemove({ email: req.body.email });
-    res.json({ message: 'User deleted' });
-  } catch (error) {
-    res.status(400).json({ error });
-  }
-});
-
-
 module.exports = router;
