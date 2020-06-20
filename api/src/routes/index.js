@@ -1,11 +1,9 @@
 import express from 'express';
+import passport from 'passport';
+import userRouter from './users';
 
 const router = express.Router();
 
-
-router.get('/', (req, res) => {
-  res.json({ message: 'Welcome to the Treasury API!' });
-});
-
+router.use('/api/users', passport.authenticate('jwt', { session: false }), userRouter);
 
 export default router;

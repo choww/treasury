@@ -1,4 +1,5 @@
 import express from 'express';
+import expressSession from 'express-session';
 import http from 'http';
 import path from 'path';
 import cookieParser from 'cookie-parser';
@@ -6,9 +7,11 @@ import logger from 'morgan';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import passport from 'passport';
 
-import indexRouter from './routes/index';
-import usersRouter from './routes/users';
+import authRouter from './routes/authentication';
+import signUpRouter from './routes/signup';
+import routes from './routes';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -21,9 +24,38 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
 
-// API ROUTES
-app.use('/api', indexRouter);
-app.use('/api/users', secureRoute, usersRouter);
+const session = {
+  secret: process.env.SESSION_SECRET,
+  cookie: {},
+  resave: false, 
+  saveUnitialized: false,
+};
+
+if (app.get('env') === 'production') {
+  session.cookie.secure = true;
+}
+
+app.use(expressSession(session));
+app.use(passport.initialize());
+app.use(passport.session());
+
+// PASSPORT SESSIONS
+passport.serializeUser((user, done) => {
+  done(null, user.email);
+});
+
+passport.deserializeUser((id, done) => {
+  done(null, user);  
+});
+
+// ROUTES
+app.use('/api/signup', signUpRouter);
+app.use('/api/auth', authRouter);
+app.use(routes);
+
+app.use('/api', (req, res) => {
+  res.json({ message: 'Welcome to the Treasury API!' });
+});
 
 // MONGODB
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });
