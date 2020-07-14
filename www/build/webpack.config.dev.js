@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const Dotenv = require('dotenv-webpack');
 const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -45,6 +46,10 @@ module.exports = {
     ],
   },
   plugins: [
+    new Dotenv({
+      safe: true,
+      defaults: false, 
+    }),
     new VueLoaderPlugin(),
     new HtmlWebpackPlugin({
       filename: 'index.html',
