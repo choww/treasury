@@ -21,11 +21,13 @@ router.post('/', async (req, res) => {
 });
 
 
-router.get('/', async (req, res) => {
+router.get('/me', async (req, res) => {
   try {
-    const users = await User.find();
-    res.json({ users });
+    const { _id } = req.user;
+    const user = await User.findOne({ _id });
+    res.status(200).send({ user });
   } catch (error) {
+    throw new Error(error);
     res.status(400).json({ error })
   }
 });

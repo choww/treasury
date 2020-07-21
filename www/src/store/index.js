@@ -1,14 +1,14 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-// import users from './users';
+import users from './users';
 import authenticate from './authenticate';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
-    // users,
-    authenticate,
+    authenticate, 
+    users,
   }
 });
 

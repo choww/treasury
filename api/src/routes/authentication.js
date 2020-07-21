@@ -14,6 +14,7 @@ passport.use('login', new BasicStrategy(
       const user = await User.findOne({ email })
       const isValidPassword = await bcrypt.compare(password, user.password);
       if (!isValidPassword) return done(null, false) 
+
       return done(null, user);
     } catch (error) {
       return done(error);
@@ -46,7 +47,7 @@ router.post('/login', async (req, res, next) => {
         if (error) return next(error); 
         const body = { _id: user._id, email: user.email };
         const token = jwt.sign({ user: body }, process.env.JWT_SECRET_KEY);
-        return res.json({ token });
+        return res.status(200).send({ token, user });
       });
     } catch (error) {
       return next(error);
