@@ -32,6 +32,8 @@ services:
     depends_on:
       - mongodb
       - api
+    env_file:
+      - ./www/.env
     restart: always
     volumes:
       - ./www/src:/app/src

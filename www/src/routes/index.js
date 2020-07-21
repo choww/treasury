@@ -11,6 +11,13 @@ const routes = [
     name: 'Landing',
     component: Landing,
   },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    meta: {
+      protected: true, 
+    },
+  },
 ]
 
 export default new Router({ 
