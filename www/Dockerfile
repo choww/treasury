@@ -12,7 +12,7 @@
 FROM node:12-alpine3.10 
 WORKDIR /app
 COPY . . 
-RUN npm i --production
+RUN apk add python make g++ && npm i --production
 # COPY --from=dep /app/node_modules ./node_modules
 # COPY --from=builder /app .
 EXPOSE 8080 

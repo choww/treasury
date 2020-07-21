@@ -1,20 +1,23 @@
 <template>
-  <div>
-    <p>me: {{ me }}</p>
-    <div v-if="isAuthenticated">
-      welcome {{ me.firstName }} {{ me.lastName }}! <button @click="endSession">Logout</button>
-    </div>
-    <div v-else>
-      <label>Email</label>
-      <input type="email" v-model="email"/>
-      <label>Password</label>
-      <input type="password" v-model="password"/>
-      <button @click="authenticate">Login</button>
-    </div>
+  <v-container>
+    <v-row>
+      <p>me: {{ me }}</p>
+      <v-col v-if="isAuthenticated">
+        welcome {{ me.firstName }} {{ me.lastName }}! <v-btn @click="endSession">Logout</v-btn>
+      </v-col>
+
+      <v-col v-else>
+        <label>Email</label>
+        <input type="email" v-model="email"/>
+        <label>Password</label>
+        <input type="password" v-model="password"/>
+        <v-btn @click="authenticate">Login</v-btn>
+      </v-col>
+    </v-row>
 
     <p>{{ error }}</p>
 
-  </div>
+  </v-container>
 </template>
 
 <script>
