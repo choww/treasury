@@ -35,7 +35,7 @@ router.get('/me', async (req, res) => {
 router.delete('/', async (req, res) => {
   try {
     await User.findOneAndRemove({ email: req.body.email });
-    res.json({ message: 'User deleted' });
+    res.status(200).json({ message: 'User deleted' });
   } catch (error) {
     res.status(400).json({ error });
   }

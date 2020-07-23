@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { axiosConfigs, getJWT } from '@/helpers'
+import { axiosConfigs, getJWT } from '@/helpers';
 
 export default {
   namespaced: true, 
@@ -16,22 +16,26 @@ export default {
   },
   actions: {
     login: async ({ commit }, { email, password }) => {
-      const { data } = await axios({
-        url: `${process.env.API_URL}/auth/login`,
-        method: 'POST',
-        auth: {
-          username: email,
-          password, 
-        },
-      })
+      try {
+        const { data } = await axios({
+          url: `${process.env.API_URL}/auth/login`,
+          method: 'POST',
+          auth: {
+            username: email,
+            password, 
+          },
+        })
    
-      if (!data.token) return
-      
-      localStorage.setItem(process.env.JWT, data.token);
-      delete data.user.password;
-      localStorage.setItem(process.env.USER, JSON.stringify(data.user));
+        if (!data.token) return
+        
+        localStorage.setItem(process.env.JWT, data.token);
+        delete data.user.password;
+        localStorage.setItem(process.env.USER, JSON.stringify(data.user));
 
-      commit('me', data.user);
+        commit('me', data.user);
+      } catch (error) {
+        console.log('Invalid credentials');
+      }
     },
 
     getCurrentUser: async ({ commit }) => {

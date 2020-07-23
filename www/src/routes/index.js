@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Landing from '@/components/Landing'
+import Dashboard from '@/components/Dashboard';
+import Landing from '@/components/Landing';
 
 Vue.use(Router);
 
@@ -14,6 +15,7 @@ const routes = [
   {
     path: '/dashboard',
     name: 'Dashboard',
+    component: Dashboard,
     meta: {
       protected: true, 
     },

@@ -1,16 +1,11 @@
 <template>
   <v-container>
     <v-row>
-      <v-col v-if="isAuthenticated">
-        <p>me: {{ me }}</p>
-        welcome {{ me.firstName }} {{ me.lastName }}! <v-btn @click="endSession">Logout</v-btn>
-      </v-col>
-
-      <v-col v-else>
-        <v-form ref="loginForm" v-model="valid">
+      <v-col v-if="!isAuthenticated">
+        <v-form ref="loginForm" v-model="valid" @submit="authenticate">
           <v-text-field label="Email" type="email" v-model="email" :rules="emailValidation"/>
           <v-text-field label="Password" type="password" v-model="password" :rules="passwordValidation"/>
-          <v-btn color="primary" @click="authenticate">Login</v-btn>
+          <v-btn type="submit" depressed color="primary">Login</v-btn>
         </v-form>
       </v-col>
     </v-row>
@@ -23,9 +18,6 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 export default {
-  created: async function() {
-    await this.getCurrentUser();
-  },
   data() {
     return {
       valid: false,
@@ -47,8 +39,6 @@ export default {
   methods: {
     ...mapActions('authenticate', [
       'login',
-      'logout',
-      'getCurrentUser',
     ]),
     async authenticate() {
       const { email, password } = this;
@@ -56,11 +46,8 @@ export default {
 
       if (isValidForm) {
         await this.login({ email, password });
+        this.$router.push('/dashboard');
       }
-    },
-    async endSession() {
-      await this.logout();
-      this.$refs.loginForm.reset();
     },
   },
 };
