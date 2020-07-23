@@ -11,9 +11,12 @@ export default {
     },
   },
   actions: {
-    find: async({ commit }) => {
+    find: async({ commit }, params = null) => {
       const axios = axiosConfigs();
-      const { data } = await axios.get(`${process.env.API_URL}/transactions`);
+      const { data } = await axios({
+        url: `${process.env.API_URL}/transactions`,
+        params,
+      });
       commit('transactions', data.transactions);
     },
 
@@ -23,7 +26,7 @@ export default {
         isExpense,
         amount: parseInt(amount),
         date,
-        // category,
+        category,
       };
       try {
         await axios({
@@ -32,7 +35,8 @@ export default {
           data,
         });
 
-        await dispatch('find');
+        const month = new Date().getMonth();
+        await dispatch('find', { filter: 'month', month });
       } catch(error) {
         console.log(error);
       }

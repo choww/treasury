@@ -1,4 +1,5 @@
 import express from 'express';
+import moment from 'moment';
 import Transaction from '../db/transaction.schema';
 
 const router = express.Router();
@@ -17,16 +18,32 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-  const transactions = await Transaction.find({ 
-    userId: req.user._id,
-  });
-  res.status(200).send({ transactions });
+  const params = { userId: req.user._id };
+  const { filter } = req.query;
+  if (filter) {
+    const value = parseInt(req.query[filter]);
+    const start = moment()[filter](value).startOf(filter).toISOString();
+    const end = moment()[filter](value).endOf(filter).toISOString();
+
+    params.date = {
+      '$gte': start,
+      '$lte': end,
+    };
+  }
+
+  try {
+    const transactions = await Transaction.find(params);
+    res.status(200).send({ transactions });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
 });
 
-router.delete('/', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
-    await Transaction.findAndRemove({ _id: req.body._id });
-    res.status(200).json({ message: 'Transaction deleted' });
+    const transaction = await Transaction.findByIdAndDelete(req.params.id);
+    res.status(200).json(transaction);
   } catch (error) {
     console.log(error);
     res.status(400).json({ error });
