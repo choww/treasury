@@ -41,7 +41,7 @@
     </v-tabs>
 
     <v-row>
-      <v-col md="4" sm="12">
+      <v-col md="4" xs="12">
         <v-card flat dark>
           <v-card-title>
             <span class="title">Amount earned</span>
@@ -52,7 +52,7 @@
         </v-card>
       </v-col>
 
-      <v-col md="4" sm="12">
+      <v-col md="4" xs="12">
         <v-card flat dark>
           <v-card-title>
             <span class="title">Amount spent</span>
@@ -63,7 +63,7 @@
         </v-card>
       </v-col>
 
-      <v-col md="4" sm="12">
+      <v-col md="4" xs="12">
         <v-card flat dark>
           <v-card-title>
             <span class="title">Amount saved</span>
@@ -79,15 +79,36 @@
       Based on this month's saving pattern, you would save ${{ amtSaved6Months }} in 6 months
     </p>
 
-    <p>Expense breakdown by category:</p>
-    <p v-for="expense in expenseByCategory">
-      {{ expense.category }} ${{ expense.amount }}
-    </p>
-
-    <div v-for="transaction in transactions" :key="transaction._id">
-      <div>{{ transaction.category }} {{ transaction.isExpense ? '-' :'+' }}${{ transaction.amount }}</div>
-      <div>{{ parseDate(transaction.date) }}</div>
-    </div>
+    <v-row>
+      <v-col md="6" xs="12">
+        <v-card>
+          <v-card-title>Expense breakdown by category:</v-card-title>
+          <v-card-text v-for="expense in expenseByCategory">
+            {{ expense.category }} ${{ expense.amount }}
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col md="6" xs="12">
+        <h3>Transactions</h3>
+        <v-timeline align-top dense>
+          <v-timeline-item
+            small
+            v-for="transaction in transactions"
+            :key="transaction._id"
+          >
+            <v-row>
+              <v-col md="4" sm="12" xs="12">
+                <small>{{ parseDate(transaction.date) }}</small>
+              </v-col>
+              <v-col md="8" sm="12" xs="12">
+                <strong>{{ transaction.category }} {{ transaction.isExpense ? '-' :'+' }}${{ transaction.amount }}</strong>
+                <v-btn @click="deleteTransaction(transaction._id)">x</v-btn>
+              </v-col>
+            </v-row>
+          </v-timeline-item>
+        </v-timeline>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -117,7 +138,7 @@ export default {
   // },
   created: async function() {
     const { monthNumber, selectedYear, filter } = this;
-    await this.getOldestTransaction();
+    await this.getOldest();
     await this.find({
       filter,
       month: monthNumber,
@@ -168,7 +189,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('transactions', ['find', 'getOldestTransaction']),
+    ...mapActions('transactions', ['find', 'delete', 'getOldest']),
     parseDate(dateString) {
       const date = new Date(dateString);
       const month = date.toLocaleString('default', { month: 'short' });
@@ -184,6 +205,9 @@ export default {
       if (this.isFilteredByMonth) params.month = this.monthNumber;
 
       return this.find(params);
+    },
+    async deleteTransaction(id) {
+      await this.delete({ id })
     },
   },
 }
