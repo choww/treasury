@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-btn-toggle mandatory v-model="filter">
-      <v-btn value="month" @click="filterBy">Monthly</v-btn>
-      <v-btn value="year" @click="filterBy">Yearly</v-btn>
+    <v-btn-toggle mandatory v-model="filter" @change="filterBy">
+      <v-btn value="month">Monthly</v-btn>
+      <v-btn value="year">Yearly</v-btn>
     </v-btn-toggle>
 
     <v-tabs
@@ -147,24 +147,17 @@ export default {
       const date = new Date(dateString);
       const month = date.toLocaleString('default', { month: 'short' });
       const day = date.getDate();
+      const year = date.getFullYear();
 
-      return `${month} ${day}`;
+      return `${month} ${day}, ${year}`;
     },
     async filterBy($event) {
-      const { filter } = this;
-      switch(filter) {
-        case 'year': {
-          return this.find({ filter, year: this.selectedYear });
-        }
-        case 'month': {
-          return this.find({
-            filter,
-            month: this.monthNumber,
-            year: this.selectedYear,
-          });
-        }
+      const { filter, selectedYear } = this;
+      const params = { filter, year: selectedYear };
 
-      }
+      if (this.isFilteredByMonth) params.month = this.monthNumber;
+
+      return this.find(params);
     },
   },
 }
