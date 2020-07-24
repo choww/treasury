@@ -83,10 +83,20 @@ export default {
       }
     },
     
-    getOldestTransaction: async ({ commit }) => {
+    getOldest: async ({ commit }) => {
       const axios = axiosConfigs();
       const { data } = await axios.get(`${process.env.API_URL}/transactions/oldest`);
       commit('oldest', data);
+    },
+
+    delete: async ({ dispatch }, { id }) => {
+      const axios = axiosConfigs();
+      const { data } = await axios.delete(`${process.env.API_URL}/transactions/${id}`);
+
+      const transactionDate = new Date(data.date);
+      const month = transactionDate.getMonth();
+      const year = transactionDate.getFullYear();
+      await dispatch('find', { filter: 'month', month, year });
     },
   },
 }
