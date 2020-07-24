@@ -10,11 +10,21 @@
           </v-radio-group>
           <v-text-field label="Amount" type="number" v-model="amount" :rules="amountValidation"/>
           <v-select :items="categories" label="Category" v-model="category" :rules="requiredField" />
-          <v-menu v-model="showDatePicker" offset-y min-width="290px">
+          <v-menu
+            ref="datepicker"
+            v-model="showDatePicker"
+            offset-y
+            min-width="290px"
+            :close-on-content-click="false"
+          >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field v-model="date" label="Date" readonly v-bind="attrs" v-on="on"/>
             </template>
-            <v-date-picker v-model="date" color="primary"/>
+            <v-date-picker v-model="date" color="primary">
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="showDatePicker = false">Cancel</v-btn>
+              <v-btn text color="primary" @click="$refs.datepicker.save(date)">OK</v-btn>
+            </v-date-picker>
           </v-menu>
 
           <v-btn type="submit" depressed color="primary">Submit</v-btn>
@@ -22,29 +32,7 @@
       </v-col>
 
       <v-col md="8" sm="12">
-        <v-btn-toggle mandatory v-model="filter">
-          <v-btn value="month" @click="filterBy">Monthly</v-btn>
-          <v-btn value="year" @click="filterBy">Yearly</v-btn>
-        </v-btn-toggle>
-
-        <v-tabs
-          v-model="selectedMonth"
-          color="purple"
-          center-active
-          grow
-          show-arrows
-        >
-          <v-tab
-            v-for="month in months"
-            :key="month"
-            :href="`#${month}`"
-          >
-            {{ month }}
-          </v-tab>
-        </v-tabs>
-
-
-        <transactions :month="monthNumber" :filter="filter"/>
+        <transactions/>
 
       </v-col>
     </v-row>
@@ -63,29 +51,33 @@ export default {
   },
   data() {
     return {
-      filter: 'month',
+      // filter: 'month',
       valid: false,
       showDatePicker: false,
       isExpense: true,
       amount: 0,
       date: new Date().toISOString().split('T')[0],
-      selectedMonth: new Date().toLocaleString('default', { month: 'short' }),
+      // selectedMonth: new Date().toLocaleString('default', { month: 'short' }),
       category: '',
       requiredField: [field => !!field || 'This is a required field'],
       amountValidation: [amount => amount && parseInt(amount) > 0 || "Amount must be greater than 0"],
-      months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      // months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     }
   },
   computed: {
     ...mapGetters('categories', ['categories']),
-    monthNumber() {
-      return this.months.indexOf(this.selectedMonth);
-    }
+    // ...mapGetters('transactions', ['years']),
+    // monthNumber() {
+    //   return this.months.indexOf(this.selectedMonth);
+    // },
+    // isFilteredByMonth() {
+    //   return this.filter === 'month';
+    // },
   },
   methods: {
     ...mapActions('transactions', [
       'create',
-      'find',
+      // 'find',
     ]),
     ...mapActions('categories', ['getCategories']),
     resetForm() {
@@ -112,22 +104,22 @@ export default {
       }
     },
 
-    async filterBy($event) {
-      const { filter } = this;
-      switch(filter) {
-        case 'year': {
-          const year = new Date().getFullYear();
-          return this.find({ filter, year });
-        }
-        case 'month': {
-          return this.find({
-            filter,
-            month: this.monthNumber,
-          });
-        }
+    // async filterBy($event) {
+    //   const { filter } = this;
+    //   switch(filter) {
+    //     case 'year': {
+    //       const year = new Date().getFullYear();
+    //       return this.find({ filter, year });
+    //     }
+    //     case 'month': {
+    //       return this.find({
+    //         filter,
+    //         month: this.monthNumber,
+    //       });
+    //     }
 
-      }
-    },
+    //   }
+    // },
   },
 }
 </script>

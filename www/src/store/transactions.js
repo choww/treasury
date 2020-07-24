@@ -4,13 +4,32 @@ export default {
   namespaced: true, 
   state: {
     transactions: [],
+    // olest transaction for the current user
+    oldest: null,
   },
   mutations: {
     transactions(state, data) {
       state.transactions = data;
     },
+    oldest(state, data) {
+      state.oldest = data;
+    },
   },
   getters: {
+    /**
+     * return an array of numbers representing the years in between
+     * the first transaction and the current year
+     */
+    years: state => {
+      const currYear = new Date().getFullYear();
+      if (!state.oldest) return [currYear];
+
+      const firstTransactionDate = state.oldest.date;
+      const year1 = new Date(firstTransactionDate).getFullYear();
+      const yearRange = (currYear - year1) + 1;
+
+      return [...Array(yearRange).keys()].map(num => year1 + num);
+    },
     amtEarned: state => {
       const earned = state.transactions.filter(transaction => !transaction.isExpense);
       if (!earned.length) return 0;
@@ -27,8 +46,9 @@ export default {
     },
   },
   actions: {
-    find: async({ commit }, params = null) => {
+    find: async({ commit }, filters = null) => {
       const axios = axiosConfigs();
+      const params = Object.assign(filters, { sort: { date: -1 } });
       const { data } = await axios({
         url: `${process.env.API_URL}/transactions`,
         params,
@@ -51,11 +71,19 @@ export default {
           data,
         });
 
-        const month = new Date().getMonth();
-        await dispatch('find', { filter: 'month', month });
+        const transactionDate = new Date(date);
+        const month = transactionDate.getMonth();
+        const year = transactionDate.getFullYear();
+        await dispatch('find', { filter: 'month', month, year });
       } catch(error) {
         console.log(error);
       }
+    },
+    
+    getOldestTransaction: async ({ commit }) => {
+      const axios = axiosConfigs();
+      const { data } = await axios.get(`${process.env.API_URL}/transactions/oldest`);
+      commit('oldest', data);
     },
   },
 }
