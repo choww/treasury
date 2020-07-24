@@ -23,58 +23,29 @@
 
       <v-col md="8" sm="12">
         <v-btn-toggle mandatory v-model="filter">
-          <v-btn @click="filterBy('month')">Monthly</v-btn>
-          <v-btn @click="filterBy('year')">Yearly</v-btn>
+          <v-btn value="month" @click="filterBy">Monthly</v-btn>
+          <v-btn value="year" @click="filterBy">Yearly</v-btn>
         </v-btn-toggle>
 
-        <h1>{{ currentMonth }}</h1>
+        <v-tabs
+          v-model="selectedMonth"
+          color="purple"
+          center-active
+          grow
+          show-arrows
+        >
+          <v-tab
+            v-for="month in months"
+            :key="month"
+            :href="`#${month}`"
+          >
+            {{ month }}
+          </v-tab>
+        </v-tabs>
 
-        <v-row>
-          <v-col md="4" sm="12">
-            <v-card flat dark>
-              <v-card-title>
-                <v-icon lef>cash-usd</v-icon>
-                <span class="title">Amount earned</span>
-              </v-card-title>
-              <v-card-text clas="headline">
-                $
-              </v-card-text>
-            </v-card>
-          </v-col>
 
-          <v-col md="4" sm="12">
-            <v-card flat dark>
-              <v-card-title>
-                <v-icon lef>cart</v-icon>
-                <span class="title">Amount spent</span>
-              </v-card-title>
-              <v-card-text clas="headline">
-                $
-              </v-card-text>
-            </v-card>
-          </v-col>
+        <transactions :month="monthNumber" :filter="filter"/>
 
-          <v-col md="4" sm="12">
-            <v-card flat dark>
-              <v-card-title>
-                <v-icon lef>wallet</v-icon>
-                <span class="title">Amount saved</span>
-              </v-card-title>
-              <v-card-text clas="headline">
-                $
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-
-        <p>Based on this month's saving pattern, you would save $__ in 6 months</p>
-
-        <p>Amount spent per category:</p>
-
-        <div v-for="transaction in transactions">
-          <div>{{ transaction.category }} {{ transaction.isExpense ? '-' :'+' }}${{ transaction.amount }}</div>
-          <div>{{ parseDate(transaction.date) }}</div>
-        </div>
       </v-col>
     </v-row>
   </v-container>
@@ -82,38 +53,34 @@
 
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
+import Transactions from '@/components/Transactions';
 export default {
+  components: {
+    Transactions,
+  },
   created: async function() {
-    const month = new Date().getMonth();
-    await this.find({ filter: 'month', month });
     await this.getCategories();
   },
   data() {
     return {
-      filter: 0, // 0 = filter by month, 1 = by year
+      filter: 'month',
       valid: false,
       showDatePicker: false,
       isExpense: true,
       amount: 0,
       date: new Date().toISOString().split('T')[0],
+      selectedMonth: new Date().toLocaleString('default', { month: 'short' }),
       category: '',
       requiredField: [field => !!field || 'This is a required field'],
       amountValidation: [amount => amount && parseInt(amount) > 0 || "Amount must be greater than 0"],
-      months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     }
   },
   computed: {
-    ...mapState({
-      transactions: state => state.transactions.transactions,
-    }),
     ...mapGetters('categories', ['categories']),
-    currentMonth() {
-      const date = new Date();
-      const year = date.getFullYear();
-      const month = date.getMonth();
-
-      return `${this.months[month]} ${year}`;
-    },
+    monthNumber() {
+      return this.months.indexOf(this.selectedMonth);
+    }
   },
   methods: {
     ...mapActions('transactions', [
@@ -121,14 +88,6 @@ export default {
       'find',
     ]),
     ...mapActions('categories', ['getCategories']),
-
-    parseDate(dateString) {
-      const date = new Date(dateString);
-      const month = date.getMonth();
-      const day = date.getDate();
-
-      return `${this.months[month]} ${day}`;
-    },
     resetForm() {
       this.isExpense = true;
       this.amount = 0;
@@ -153,15 +112,18 @@ export default {
       }
     },
 
-    async filterBy(filter) {
+    async filterBy($event) {
+      const { filter } = this;
       switch(filter) {
         case 'year': {
           const year = new Date().getFullYear();
           return this.find({ filter, year });
         }
         case 'month': {
-          const month = new Date().getMonth();
-          return this.find({ filter, month });
+          return this.find({
+            filter,
+            month: this.monthNumber,
+          });
         }
 
       }
