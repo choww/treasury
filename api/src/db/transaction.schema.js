@@ -1,10 +1,15 @@
 import mongoose from 'mongoose';
-import Category from './category.schema';
 
 const transactionSchema = new mongoose.Schema({
   userId: {
-    type: Number,
+    type: String,
     index: true,
+    required: true,
+  },
+  category: {
+    type: String,
+    index: true,
+    required: true,
   },
   isExpense: {
     type: Boolean,
@@ -18,10 +23,6 @@ const transactionSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  category: {
-    type: Category,
-    required: true,
-  }
 });
 
 module.exports = mongoose.model('Transaction', transactionSchema);

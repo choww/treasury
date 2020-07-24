@@ -1,17 +1,12 @@
 <template>
   <v-container>
     <v-row>
-      <p>me: {{ me }}</p>
-      <v-col v-if="isAuthenticated">
-        welcome {{ me.firstName }} {{ me.lastName }}! <v-btn @click="endSession">Logout</v-btn>
-      </v-col>
-
-      <v-col v-else>
-        <label>Email</label>
-        <input type="email" v-model="email"/>
-        <label>Password</label>
-        <input type="password" v-model="password"/>
-        <v-btn @click="authenticate">Login</v-btn>
+      <v-col v-if="!isAuthenticated">
+        <v-form ref="loginForm" v-model="valid" @submit="authenticate">
+          <v-text-field label="Email" type="email" v-model="email" :rules="emailValidation"/>
+          <v-text-field label="Password" type="password" v-model="password" :rules="passwordValidation"/>
+          <v-btn type="submit" depressed color="primary">Login</v-btn>
+        </v-form>
       </v-col>
     </v-row>
 
@@ -23,14 +18,14 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 export default {
-  created: async function() {
-    await this.getCurrentUser();
-  },
   data() {
     return {
+      valid: false,
       email: '',
       password: '',
       error: '',
+      emailValidation: [email => !!email || 'Email is required'],
+      passwordValidation: [password => !!password || 'Password is required'],
     };
   },
   computed: {
@@ -44,25 +39,15 @@ export default {
   methods: {
     ...mapActions('authenticate', [
       'login',
-      'logout',
-      'getCurrentUser',
     ]),
     async authenticate() {
       const { email, password } = this;
+      const isValidForm = this.$refs.loginForm.validate()
 
-      if (!email || !password) {
-        this.error = 'Please fill in both fields';
-        return;
+      if (isValidForm) {
+        await this.login({ email, password });
+        this.$router.push('/dashboard');
       }
-
-      await this.login({ email, password });
-
-      this.email = '';
-      this.password = '';
-      this.error = '';
-    },
-    async endSession() {
-      await this.logout();
     },
   },
 };

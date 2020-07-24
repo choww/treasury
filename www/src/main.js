@@ -12,10 +12,12 @@ const vuetify = new Vuetify({});
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.protected)) {
-    if (localStorage.getItem(process.env.JWT)) next();
-
+    if (localStorage.getItem(process.env.JWT)) {
+      next();
+      return
+    }
     next({
-      path: '/login',
+      path: '/',
       params: { nextUrl: to.fullPath }
     });
   }
