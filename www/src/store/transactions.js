@@ -30,6 +30,9 @@ export default {
 
       return [...Array(yearRange).keys()].map(num => year1 + num);
     },
+    expenses: state => {
+      return state.transactions.filter(transaction => transaction.isExpense);
+    },
     amtEarned: state => {
       const earned = state.transactions.filter(transaction => !transaction.isExpense);
       if (!earned.length) return 0;

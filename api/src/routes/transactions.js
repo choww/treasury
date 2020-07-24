@@ -17,13 +17,32 @@ router.post('/', async (req, res) => {
   }
 });
 
+// get oldest transaction for the current user
+router.get('/oldest', async (req, res) => {
+  try {
+    const transaction = await Transaction.findOne({ 
+      userId: req.user._id 
+    }).sort({ date: 1 });
+    res.status(200).json(transaction);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
+});
+
 router.get('/', async (req, res) => {
+  const { filter, sort } = req.query;
   const params = { userId: req.user._id };
-  const { filter } = req.query;
+  const sortParams = JSON.parse(sort);
+
   if (filter) {
-    const value = parseInt(req.query[filter]);
-    const start = moment()[filter](value).startOf(filter).toISOString();
-    const end = moment()[filter](value).endOf(filter).toISOString();
+    const year = parseInt(req.query.year);
+    let date = moment().year(year)
+    if (req.query.month) {
+      date = date.month(req.query.month);
+    }
+    const start = date.startOf(filter).toISOString();
+    const end = date.endOf(filter).toISOString();
 
     params.date = {
       '$gte': start,
@@ -32,7 +51,8 @@ router.get('/', async (req, res) => {
   }
 
   try {
-    const transactions = await Transaction.find(params);
+    const transactions = await Transaction.find(params)
+      .sort(sortParams);
     res.status(200).send({ transactions });
   } catch (error) {
     console.log(error);

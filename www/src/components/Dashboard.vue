@@ -32,8 +32,7 @@
       </v-col>
 
       <v-col md="8" sm="12">
-        <transactions/>
-
+        <transactions :categories="categories"/>
       </v-col>
     </v-row>
   </v-container>
@@ -51,34 +50,21 @@ export default {
   },
   data() {
     return {
-      // filter: 'month',
       valid: false,
       showDatePicker: false,
       isExpense: true,
       amount: 0,
       date: new Date().toISOString().split('T')[0],
-      // selectedMonth: new Date().toLocaleString('default', { month: 'short' }),
       category: '',
       requiredField: [field => !!field || 'This is a required field'],
       amountValidation: [amount => amount && parseInt(amount) > 0 || "Amount must be greater than 0"],
-      // months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     }
   },
   computed: {
     ...mapGetters('categories', ['categories']),
-    // ...mapGetters('transactions', ['years']),
-    // monthNumber() {
-    //   return this.months.indexOf(this.selectedMonth);
-    // },
-    // isFilteredByMonth() {
-    //   return this.filter === 'month';
-    // },
   },
   methods: {
-    ...mapActions('transactions', [
-      'create',
-      // 'find',
-    ]),
+    ...mapActions('transactions', ['create']),
     ...mapActions('categories', ['getCategories']),
     resetForm() {
       this.isExpense = true;
@@ -103,23 +89,6 @@ export default {
         this.resetForm();
       }
     },
-
-    // async filterBy($event) {
-    //   const { filter } = this;
-    //   switch(filter) {
-    //     case 'year': {
-    //       const year = new Date().getFullYear();
-    //       return this.find({ filter, year });
-    //     }
-    //     case 'month': {
-    //       return this.find({
-    //         filter,
-    //         month: this.monthNumber,
-    //       });
-    //     }
-
-    //   }
-    // },
   },
 }
 </script>

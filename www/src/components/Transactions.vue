@@ -40,7 +40,6 @@
 
     </v-tabs>
 
-
     <v-row>
       <v-col md="4" sm="12">
         <v-card flat dark>
@@ -76,9 +75,14 @@
       </v-col>
     </v-row>
 
-    <p>Based on this month's saving pattern, you would save $__ in 6 months</p>
+    <p v-if="isFilteredByMonth">
+      Based on this month's saving pattern, you would save ${{ amtSaved6Months }} in 6 months
+    </p>
 
-    <p>Amount spent per category:</p>
+    <p>Expense breakdown by category:</p>
+    <p v-for="expense in expenseByCategory">
+      {{ expense.category }} ${{ expense.amount }}
+    </p>
 
     <div v-for="transaction in transactions" :key="transaction._id">
       <div>{{ transaction.category }} {{ transaction.isExpense ? '-' :'+' }}${{ transaction.amount }}</div>
@@ -91,6 +95,12 @@
 import { mapActions, mapGetters, mapState } from 'vuex';
 
 export default {
+  props: {
+    categories: {
+      type: Array,
+      required: true,
+    },
+  },
   // watch: {
   //   filte: async function(newFilter) {
   //     const { month } = this;
@@ -129,16 +139,32 @@ export default {
     ...mapGetters('transactions', [
       'amtEarned',
       'amtSpent',
+      'expenses',
       'years',
     ]),
     amtSaved() {
       return this.amtEarned - this.amtSpent;
+    },
+    amtSaved6Months(){
+      return this.amtSaved * 6;
     },
     monthNumber() {
       return this.months.indexOf(this.selectedMonth);
     },
     isFilteredByMonth() {
       return this.filter === 'month';
+    },
+    expenseByCategory() {
+      const expenses = this.categories.map(category => {
+        const filtered = this.expenses.filter(transaction => transaction.category === category);
+        const totalExpense = filtered.reduce((sum, expense) => {
+          return sum + expense.amount;
+        }, 0);
+
+        return { category, amount: totalExpense };
+      });
+
+      return expenses;
     },
   },
   methods: {
