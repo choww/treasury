@@ -10,6 +10,22 @@ export default {
       state.transactions = data;
     },
   },
+  getters: {
+    amtEarned: state => {
+      const earned = state.transactions.filter(transaction => !transaction.isExpense);
+      if (!earned.length) return 0;
+      return earned.reduce((accumulated, transaction) => {
+        return accumulated + transaction.amount
+      }, 0);
+    },
+    amtSpent: state => {
+      const spent = state.transactions.filter(transaction => transaction.isExpense);
+      if (!spent.length) return 0;
+      return spent.reduce((accumulated, transaction) => {
+        return accumulated + transaction.amount
+      }, 0);
+    },
+  },
   actions: {
     find: async({ commit }, params = null) => {
       const axios = axiosConfigs();

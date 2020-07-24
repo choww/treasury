@@ -8,7 +8,7 @@
             <span class="title">Amount earned</span>
           </v-card-title>
           <v-card-text clas="headline">
-            $
+            $ {{ amtEarned }}
           </v-card-text>
         </v-card>
       </v-col>
@@ -20,7 +20,7 @@
             <span class="title">Amount spent</span>
           </v-card-title>
           <v-card-text clas="headline">
-            $
+            ${{ amtSpent }}
           </v-card-text>
         </v-card>
       </v-col>
@@ -32,7 +32,7 @@
             <span class="title">Amount saved</span>
           </v-card-title>
           <v-card-text clas="headline">
-            $
+            ${{ amtSaved }}
           </v-card-text>
         </v-card>
       </v-col>
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 export default {
   props: {
@@ -92,6 +92,10 @@ export default {
     ...mapState({
       transactions: state => state.transactions.transactions,
     }),
+    ...mapGetters('transactions', ['amtEarned', 'amtSpent']),
+    amtSaved() {
+      return this.amtEarned - this.amtSpent;
+    },
   },
   methods: {
     ...mapActions('transactions', ['find']),
