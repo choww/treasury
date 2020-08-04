@@ -42,7 +42,7 @@
 
     <v-row>
       <v-col md="4" xs="12">
-        <v-card flat dark>
+        <v-card flat dark color="info">
           <v-card-title>
             <span class="title">Amount earned</span>
           </v-card-title>
@@ -53,7 +53,7 @@
       </v-col>
 
       <v-col md="4" xs="12">
-        <v-card flat dark>
+        <v-card flat dark color="error">
           <v-card-title>
             <span class="title">Amount spent</span>
           </v-card-title>
@@ -63,7 +63,7 @@
         </v-card>
       </v-col>
 
-      <v-col md="4" xs="12">
+      <v-col md="4" xs="12" color="success">
         <v-card flat dark>
           <v-card-title>
             <span class="title">Amount saved</span>
@@ -101,8 +101,14 @@
                 <small>{{ parseDate(transaction.date) }}</small>
               </v-col>
               <v-col md="8" sm="12" xs="12">
-                <strong>{{ transaction.category }} {{ transaction.isExpense ? '-' :'+' }}${{ transaction.amount }}</strong>
-                <v-btn @click="deleteTransaction(transaction._id)">x</v-btn>
+                <strong>
+                  {{ transaction.category }} {{ transaction.isExpense ? '-' :'+' }}${{ transaction.amount }}
+                </strong>
+                <v-btn small text><v-icon small class="mdi mdi-pencil"/></v-btn>
+                <v-btn small text color="error" @click="deleteTransaction(transaction._id)">
+                  <v-icon small class="mdi mdi-trash-can-outline"/>
+                  <!-- TODO confirmation message before delete -->
+                </v-btn>
               </v-col>
             </v-row>
           </v-timeline-item>

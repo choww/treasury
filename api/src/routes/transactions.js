@@ -60,6 +60,22 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.patch('/:id', async (req, res) => {
+  try {
+    const transaction = await Transaction.findOneAndUpdate(
+      { 
+        _id: req.params.id,
+        userId: req.user._id,
+      },
+      { $set: req.body },
+    );
+    res.status(200).json(transaction);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
+});
+
 router.delete('/:id', async (req, res) => {
   try {
     const transaction = await Transaction.findByIdAndDelete(req.params.id);
