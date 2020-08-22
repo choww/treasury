@@ -6,11 +6,12 @@
           <v-text-field label="Email" type="email" v-model="email" :rules="emailValidation"/>
           <v-text-field label="Password" type="password" v-model="password" :rules="passwordValidation"/>
           <v-btn type="submit" depressed color="primary">Login</v-btn>
+          <p>{{ error }}</p>
         </v-form>
       </v-col>
+
     </v-row>
 
-    <p>{{ error }}</p>
 
   </v-container>
 </template>

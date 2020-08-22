@@ -24,6 +24,7 @@
       </v-date-picker>
     </v-menu>
 
+    <v-btn depressed @click="$emit('cancel')">Cancel</v-btn>
     <v-btn type="submit" depressed color="primary">Submit</v-btn>
   </v-form>
 </template>
@@ -39,6 +40,24 @@ export default {
     categories: {
       type: Array,
       required: true,
+      immediate: true,
+    },
+    isEditing: Boolean,
+    transaction: [Object, null],
+  },
+  watch: {
+    transaction: {
+      handler(newTransaction) {
+        if (newTransaction) {
+          const { isExpense, amount, date, category } = newTransaction;
+          this.isExpense = isExpense;
+          this.amount = amount;
+          this.date = this.formatDate(date);
+          this.category = category;
+        }
+      },
+      immediate: true,
+      deep: true,
     },
   },
   data() {
@@ -54,14 +73,18 @@ export default {
     };
   },
   methods: {
-    ...mapActions('transactions', ['create']),
+    ...mapActions('transactions', ['create', 'edit']),
+    formatDate(date) {
+      return new Date(date).toISOString().split('T')[0];
+    },
     resetForm() {
       this.isExpense = true;
       this.amount = 0;
-      this.date = new Date().toISOString().split('T')[0];
+      this.date = this.formatDate(new Date());
       this.category = '';
 
       this.$refs.form.resetValidation();
+      this.$emit('cancel');
     },
     async createTransaction() {
       const isValidForm = this.$refs.form.validate();
@@ -74,7 +97,15 @@ export default {
           category: this.category,
         };
 
-        await this.create(params);
+        if (this.isEditing) {
+          await this.edit({
+            id: this.transaction._id,
+            params,
+          });
+        } else {
+          await this.create(params);
+        }
+
         this.resetForm();
       }
     },

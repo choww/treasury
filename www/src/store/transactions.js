@@ -1,7 +1,7 @@
 import { axiosConfigs } from '@/helpers';
 
-export default {  
-  namespaced: true, 
+export default {
+  namespaced: true,
   state: {
     transactions: [],
     // olest transaction for the current user
@@ -82,7 +82,24 @@ export default {
         console.log(error);
       }
     },
-    
+
+    edit: async ({ dispatch }, { id, params }) => {
+      const axios = axiosConfigs();
+      const { amount } = params;
+      if (amount) {
+        params.amount = parseInt(amount);
+      }
+      try {
+        await axios({
+          url: `${process.env.API_URL}/transactions/${id}`,
+          method: 'PATCH',
+          data: params,
+        });
+      } catch(error) {
+        console.log(error);
+      }
+    },
+
     getOldest: async ({ commit }) => {
       const axios = axiosConfigs();
       const { data } = await axios.get(`${process.env.API_URL}/transactions/oldest`);

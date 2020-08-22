@@ -1,12 +1,13 @@
 <template>
   <v-container>
     <v-row>
-      <v-col md="4" sm="12">
-        <transaction-form :categories="categories"/>
+      <v-col md="4" sm="12" v-if="showForm">
+        <transaction-form :categories="categories" @cancel="resetForm" :transaction="transaction" :is-editing="isEditing"/>
       </v-col>
 
-      <v-col md="8" sm="12">
-        <transactions :categories="categories"/>
+      <v-col :md="dashboardWidth" sm="12">
+        <v-btn rounded primary @click="toggleForm">+</v-btn>
+        <transactions :categories="categories" @edit="showEditForm"/>
       </v-col>
     </v-row>
   </v-container>
@@ -24,47 +25,34 @@ export default {
   created: async function() {
     await this.getCategories();
   },
-  // data() {
-  //   return {
-  //     valid: false,
-  //     showDatePicker: false,
-  //     isExpense: true,
-  //     amount: 0,
-  //     date: new Date().toISOString().split('T')[0],
-  //     category: '',
-  //     requiredField: [field => !!field || 'This is a required field'],
-  //     amountValidation: [amount => amount && parseInt(amount) > 0 || "Amount must be greater than 0"],
-  //   }
-  // },
+  data() {
+    return {
+      showForm: false,
+      dashboardWidth: 12,
+      transaction: null,
+    }
+  },
   computed: {
     ...mapGetters('categories', ['categories']),
   },
   methods: {
-    // ...mapActions('transactions', ['create']),
     ...mapActions('categories', ['getCategories']),
-    // resetForm() {
-    //   this.isExpense = true;
-    //   this.amount = 0;
-    //   this.date = new Date().toISOString().split('T')[0];
-    //   this.category = '';
-
-    //   this.$refs.form.resetValidation();
-    // },
-    // async createTransaction() {
-    //   const isValidForm = this.$refs.form.validate();
-
-    //   if (isValidForm) {
-    //     const params = {
-    //       isExpense: this.isExpense,
-    //       date: this.date,
-    //       amount: this.amount,
-    //       category: this.category,
-    //     };
-
-    //     await this.create(params);
-    //     this.resetForm();
-    //   }
-    // },
+    toggleForm() {
+      this.showForm = true;
+      this.dashboardWidth = 8;
+      this.isEditing = false;
+    },
+    resetForm() {
+      this.showForm = false;
+      this.dashboardWidth = 12;
+      this.transaction = null;
+      this.isEditing = false;
+    },
+    showEditForm(transaction) {
+      this.toggleForm();
+      this.transaction = transaction;
+      this.isEditing = true;
+    }
   },
 }
 </script>

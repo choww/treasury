@@ -104,7 +104,7 @@
                 <strong>
                   {{ transaction.category }} {{ transaction.isExpense ? '-' :'+' }}${{ transaction.amount }}
                 </strong>
-                <v-btn small text><v-icon small class="mdi mdi-pencil"/></v-btn>
+                <v-btn small text><v-icon small class="mdi mdi-pencil" @click="$emit('edit', transaction)"/></v-btn>
                 <v-btn small text color="error" @click="deleteTransaction(transaction._id)">
                   <v-icon small class="mdi mdi-trash-can-outline"/>
                   <!-- TODO confirmation message before delete -->
@@ -129,7 +129,7 @@ export default {
     },
   },
   // watch: {
-  //   filte: async function(newFilter) {
+  //   filter: async function(newFilter) {
   //     const { month } = this;
   //     await this.find({ filter: newFilter, month });
   //   },
@@ -199,7 +199,7 @@ export default {
     parseDate(dateString) {
       const date = new Date(dateString);
       const month = date.toLocaleString('default', { month: 'short' });
-      const day = date.getDate();
+      const day = date.getUTCDate();
       const year = date.getFullYear();
 
       return `${month} ${day}, ${year}`;
