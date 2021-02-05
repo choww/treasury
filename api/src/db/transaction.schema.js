@@ -18,6 +18,7 @@ const transactionSchema = new mongoose.Schema({
   amount: {
     type: Number,
     required: true,
+    get:
   },
   date: {
     type: Date,

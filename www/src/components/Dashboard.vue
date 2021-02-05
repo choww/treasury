@@ -22,7 +22,7 @@ export default {
     Transactions,
     TransactionForm,
   },
-  created: async function() {
+  async created() {
     await this.getCategories();
   },
   data() {
@@ -38,18 +38,20 @@ export default {
   methods: {
     ...mapActions('categories', ['getCategories']),
     toggleForm() {
-      this.showForm = true;
-      this.dashboardWidth = 8;
+      this.showForm = !this.showForm;
       this.isEditing = false;
     },
+    // triggered when 'cancel' event is emitted from cancel btn click
     resetForm() {
       this.showForm = false;
       this.dashboardWidth = 12;
       this.transaction = null;
       this.isEditing = false;
     },
+    // triggered when 'edit' event is emitted from edit btn click
     showEditForm(transaction) {
       this.toggleForm();
+      this.dashboardWidth = 8;
       this.transaction = transaction;
       this.isEditing = true;
     }

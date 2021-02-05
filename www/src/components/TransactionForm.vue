@@ -78,6 +78,7 @@ export default {
       return new Date(date).toISOString().split('T')[0];
     },
     resetForm() {
+      this.isEditing = false;
       this.isExpense = true;
       this.amount = 0;
       this.date = this.formatDate(new Date());
