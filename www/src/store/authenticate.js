@@ -2,7 +2,7 @@ import axios from 'axios';
 import { axiosConfigs, getJWT } from '@/helpers';
 
 export default {
-  namespaced: true, 
+  namespaced: true,
   state: {
     me: null,
   },
@@ -22,12 +22,12 @@ export default {
           method: 'POST',
           auth: {
             username: email,
-            password, 
+            password,
           },
         })
-   
+
         if (!data.token) return
-        
+
         localStorage.setItem(process.env.JWT, data.token);
         delete data.user.password;
         localStorage.setItem(process.env.USER, JSON.stringify(data.user));
@@ -55,6 +55,29 @@ export default {
       return data;
     },
 
+    createUser: async({ commit, dispatch }, { firstName, lastName, email, password, monthlyIncome }) => {
+      try {
+        const { data } = await axios({
+          url: `${process.env.API_URL}/signup`,
+          method: 'POST',
+          data: {
+            firstName,
+            lastName,
+            email,
+            password,
+            monthlyIncome,
+          },
+        });
+
+        if (data.user) {
+          await dispatch('login', { email, password });
+        }
+
+      } catch (error) {
+        console.log('Something went wrong', error);
+      }
+    },
+
     logout: async ({ commit }) => {
       const data = await axios(`${process.env.API_URL}/auth/logout`);
 
@@ -65,5 +88,5 @@ export default {
       return data;
     },
   }
-  
+
 };

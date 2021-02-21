@@ -5,7 +5,7 @@ networks:
 
 services:
   api:
-    container_name: api
+    container_name: treasury-api
     build:
       context: ./api
       dockerfile: Dockerfile.dev
@@ -22,7 +22,7 @@ services:
     networks:
       - treasury
   www:
-    container_name: www
+    container_name: treasury-www
     build:
       context: ./www
       dockerfile: Dockerfile.dev
